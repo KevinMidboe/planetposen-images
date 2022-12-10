@@ -32,10 +32,9 @@ steps:
           - pull_request
       branch:
         - main
-        - feat/drone-ci-setup
 
 ---
 kind: signature
-hmac: 8b78559987b3213bc139f7f299ce74e46967fd3a1d7386c264e6c403ccda03ca
+hmac: af032206e6fe57ddf4bee365bc616c3d8936973e0aa51e162a662f8026848422
 
 ...
