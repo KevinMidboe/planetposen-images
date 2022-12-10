@@ -1,0 +1,39 @@
+---
+kind: pipeline
+type: docker
+name: Build and publish
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: build
+    image: golang
+    commands:
+      - make build
+
+  - name: Build and publish docker image
+    image: plugins/docker
+    settings:
+      registry: ghcr.io
+      repo: ghcr.io/kevinmidboe/planetposen-images
+      dockerfile: Dockerfile
+      username:
+        from_secret: GITHUB_USERNAME
+      password:
+        from_secret: GITHUB_PASSWORD
+      tags: latest
+    when:
+      event:
+        include:
+          - push
+        exclude:
+          - pull_request
+      branch:
+        - main
+        - feat/drone-ci-setup
+
+---
+kind: signature
+hmac: 13d584e973017ab053c389c87d797deb78ea0c85c348446c7e5c1e3e8a174bc3
