@@ -1,0 +1,11 @@
+package handler
+
+import "net/http"
+
+// Healthz is used for our readiness and liveness probes.
+// 		GET /_healthz
+// 		Responds: 200
+func Healthz(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(http.StatusText(http.StatusOK)))
+}
