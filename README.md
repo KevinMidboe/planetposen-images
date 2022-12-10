@@ -33,4 +33,3 @@ or
 ```bash
 (sudo) docker run -d --name planetposen-images -p 8000:8000 --env-file .env planetposen-images
 ```
-
