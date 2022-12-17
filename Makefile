@@ -4,7 +4,7 @@ PROJECT_NAME=$(shell basename $(CURDIR))
 
 ## build: build the application
 build:
-	export GO111MODULE="on"; \
+	export GO111MODULE="auto"; \
 	go mod download; \
 	go mod vendor; \
 	CGO_ENABLED=0 go build -a -ldflags '-s' -installsuffix cgo -o main cmd/server/main.go
