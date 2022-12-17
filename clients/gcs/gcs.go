@@ -3,15 +3,10 @@ package gcs
 import (
 	"cloud.google.com/go/storage"
 	"context"
+	"fmt"
 	"github.com/kevinmidboe/planetposen-images/util"
 	"google.golang.org/api/iterator"
 	"path/filepath"
-	// "errors"
-	"fmt"
-	// "github.com/dbmedialab/dearheart/event"
-	// "github.com/dbmedialab/dearheart/util"
-	// "path/filepath"
-	// "time"
 )
 
 // Client represents a GCS client with the functions that *we* need.
@@ -73,9 +68,11 @@ func (c *clientImpl) FileLister(ctx context.Context) (files []string, err error)
 		if err == iterator.Done {
 			break
 		}
+
 		if err != nil {
 			return nil, fmt.Errorf("error from query %s", err)
 		}
+
 		names = append(names, attrs.Name)
 	}
 

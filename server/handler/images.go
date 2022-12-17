@@ -40,16 +40,17 @@ func UploadImages(hostname string, gcsClient gcs.Client) http.HandlerFunc {
 		filename := strings.ReplaceAll(fileHeader.Filename, "/", "-")
 		defer file.Close()
 
+		logger.InfoWithFilename("uploading image with filename", filename)
 		writer, path, err := gcsClient.FileWriter(ctx, filename)
 		if err != nil {
-			handleError(w, err, "File unable to write file to gcs", http.StatusServiceUnavailable, true)
+			handleGoogleApiError(w, err, "File unable to write file to gcs", http.StatusServiceUnavailable, true)
 			return
 		}
 		defer writer.Close()
 
 		_, err = io.Copy(writer, file)
 		if err != nil {
-			handleError(w, err, "Error copying file to GCS", http.StatusInternalServerError, true)
+			handleGoogleApiError(w, err, "Error copying file to GCS", http.StatusInternalServerError, true)
 		}
 
 		finalURL := util.ImageURL(hostname, string(path))
@@ -57,6 +58,7 @@ func UploadImages(hostname string, gcsClient gcs.Client) http.HandlerFunc {
 			Path: string(path),
 			URL:  finalURL,
 		}
+		logger.UploadSuccessMessage(string(path), finalURL)
 
 		responseData, _ := json.Marshal(responseStruct)
 		_, _ = w.Write(responseData)
@@ -68,6 +70,9 @@ func FetchImage(gcsClient gcs.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		path := gcs.EncodedPath(mux.Vars(r)["path"])
+
+		logger.InfoWithPath("Getting image", string(path))
+
 		if path == "" {
 			handleError(w, nil, "missing image path ", http.StatusBadRequest, true)
 			return
@@ -75,7 +80,7 @@ func FetchImage(gcsClient gcs.Client) http.HandlerFunc {
 
 		reader, err := gcsClient.FileReader(ctx, path)
 		if err != nil {
-			handleError(w, err, "error from gcs file reader ", http.StatusBadRequest, true)
+			handleGoogleApiError(w, err, "error from gcs file reader ", http.StatusBadRequest, true)
 			return
 		}
 		defer reader.Close()
@@ -87,6 +92,8 @@ func FetchImage(gcsClient gcs.Client) http.HandlerFunc {
 			w.Header().Set("Content-Type", fmt.Sprintf("image/%s", extension[1:]))
 		}
 
+		logger.InfoWithFilename("found and returning file from bucket", string(filename))
+
 		_, err = io.Copy(w, reader)
 		if err != nil {
 			handleError(w, err, "Couldn't copy the file from GCS ", http.StatusInternalServerError, true)
@@ -96,11 +103,12 @@ func FetchImage(gcsClient gcs.Client) http.HandlerFunc {
 
 func ListImages(gcsClient gcs.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		logger.Info("Listing images")
 		ctx := r.Context()
 
 		files, err := gcsClient.FileLister(ctx)
 		if err != nil {
-			handleError(w, err, "error from gcs file lister ", http.StatusBadRequest, true)
+			handleGoogleApiError(w, err, "error from gcs file lister ", http.StatusBadRequest, true)
 			return
 		}
 

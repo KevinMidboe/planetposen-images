@@ -1,12 +1,14 @@
 // Package server provides functionality to easily set up an HTTTP server.
 //
 // Clients:
-//		Database
+//
+//	Database
 package server
 
 import (
 	"context"
 	"fmt"
+	log "github.com/kevinmidboe/planetposen-images/logger"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,7 +17,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kevinmidboe/planetposen-images/clients/gcs"
 	"github.com/kevinmidboe/planetposen-images/config"
-	log "github.com/sirupsen/logrus"
 )
 
 // Server holds the HTTP server, router, config and all clients.
@@ -25,6 +26,8 @@ type Server struct {
 	Router    *mux.Router
 	GCSClient gcs.Client
 }
+
+var logger = log.InitLogger()
 
 // Create sets up the HTTP server, router and all clients.
 // Returns an error if an error occurs.
@@ -68,17 +71,17 @@ func (s *Server) Serve(ctx context.Context) error {
 
 		<-stop
 
-		log.Info("Shutdown signal received")
+		logger.Info("Shutdown signal received")
 
 		if err := s.HTTP.Shutdown(ctx); err != nil {
-			log.Error(err.Error())
+			logger.Error("Error causing shutdown", err)
 		}
 	}(ctx, s)
 
-	log.Infof("Ready at: %s", s.Config.Port)
+	logger.Info("Ready at: " + s.Config.Port)
 
 	if err := s.HTTP.ListenAndServe(); err != http.ErrServerClosed {
-		log.Fatalf(err.Error())
+		logger.Fatal(err)
 	}
 
 	return nil
