@@ -10,7 +10,7 @@ func (s *Server) setupRoutes() {
 	s.Router.HandleFunc("/_healthz", handler.Healthz).Methods("GET").Name("Health")
 
 	api := s.Router.PathPrefix(v1API).Subrouter()
-	api.HandleFunc("/images", handler.UploadImages(s.Config.Hostname, s.GCSClient)).Methods("POST").Name("UploadImages")
+	api.HandleFunc("/images", handler.UploadImages(s.Config.Hostname, s.Config.GCSBucket, s.GCSClient)).Methods("POST").Name("UploadImages")
 	api.HandleFunc("/images", handler.ListImages(s.GCSClient)).Methods("GET").Name("ListImages")
 
 	// Raw image fetcher

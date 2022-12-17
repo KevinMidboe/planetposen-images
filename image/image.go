@@ -6,8 +6,9 @@ import (
 
 // MessageImage is a representation of a single image in the database
 type Image struct {
-	Path string `json:"path"`
-	URL  string `json:"url,omitempty"`
+	Path      string `json:"path"`
+	URL       string `json:"url,omitempty"`
+	RemoteURL string `json:"remote_url"`
 }
 
 // GetURL gets URL of the image, also in cases where MessageImage.URL is not defined.

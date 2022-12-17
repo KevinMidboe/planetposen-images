@@ -2,26 +2,19 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/kevinmidboe/planetposen-images/util"
-	"strings"
-
-	// "github.com/sirupsen/logrus"
-	// "encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/kevinmidboe/planetposen-images/clients/gcs"
 	"github.com/kevinmidboe/planetposen-images/image"
-	// "github.com/dbmedialab/dearheart/event"
-	// "github.com/dbmedialab/dearheart/server/internal/serverutils"
-	"github.com/gorilla/mux"
+	"github.com/kevinmidboe/planetposen-images/util"
 	"io"
 	"net/http"
 	"path/filepath"
-	// "strconv"
-	// "strings"
+	"strings"
 )
 
 // UploadImages takes a request with file form and uploads the content to GCS
-func UploadImages(hostname string, gcsClient gcs.Client) http.HandlerFunc {
+func UploadImages(hostname string, bucketname string, gcsClient gcs.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Get initial protocol data
 		ctx := r.Context()
@@ -54,9 +47,12 @@ func UploadImages(hostname string, gcsClient gcs.Client) http.HandlerFunc {
 		}
 
 		finalURL := util.ImageURL(hostname, string(path))
+		decodedPath, err := path.Decode()
+		remoteURL := util.ImageRemoteURL(bucketname, string(decodedPath))
 		responseStruct := image.Image{
-			Path: string(path),
-			URL:  finalURL,
+			Path:      string(path),
+			URL:       finalURL,
+			RemoteURL: remoteURL,
 		}
 		logger.UploadSuccessMessage(string(path), finalURL)
 

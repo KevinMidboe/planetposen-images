@@ -9,9 +9,9 @@ import (
 
 // Config contains environment variables.
 type Config struct {
-	Hostname     					string  `envconfig:"HOSTNAME"`
-	GCSBucket 						string  `envconfig:"GCS_BUCKET" default:"p"`
-	Port                  string  `envconfig:"PORT" default:"8000"`
+	Hostname  string `envconfig:"HOSTNAME"`
+	GCSBucket string `envconfig:"GCS_BUCKET" default:"p"`
+	Port      string `envconfig:"PORT" default:"8000"`
 }
 
 // LoadConfig reads environment variables, populates and returns Config.
