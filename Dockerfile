@@ -16,6 +16,14 @@ EXPOSE 8000
 
 RUN apk add --no-cache ca-certificates
 
+RUN mkdir -p /etc/secrets
+VOLUME /etc/secrets
+
+RUN mkdir -p /var/log/planetposen-logs
+VOLUME /var/log/planetposen-logs
+
 COPY --from=builder /go/src/github.com/kevinmidboe/planetposen-images .
+
+ENV GOOGLE_APPLICATION_CREDENTIALS=/etc/secrets/sa-key.json
 
 CMD ["./main"]

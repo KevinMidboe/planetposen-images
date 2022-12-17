@@ -22,7 +22,7 @@ func InitLogger() *ApplicationLogger {
 	var baseLogger = logrus.New()
 	var applicationLogger = &ApplicationLogger{baseLogger}
 
-	f, _ := os.OpenFile("/var/log/planetposen_logs/planetposen-images.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, _ := os.OpenFile("/var/log/planetposen-logs/planetposen-images.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	applicationLogger.SetOutput(f)
 	applicationLogger.Formatter = &logrus.JSONFormatter{
@@ -72,25 +72,25 @@ func (l *ApplicationLogger) UploadSuccessMessage(path string, url string) {
 	}).Info("Uploaded and available")
 }
 
-func (l *ApplicationLogger) Error(message string, error error) {
+func (l *ApplicationLogger) Error(message string, err error) {
 	l.WithFields(logrus.Fields{
 		"application": "planetposen-images",
-		"err":         error,
+		"err":         err,
 	}).Error(message)
 }
 
-func (l *ApplicationLogger) Fatal(error error) {
+func (l *ApplicationLogger) Fatal(err error) {
 	l.WithFields(logrus.Fields{
 		"application": "planetposen-images",
-		"err":         error,
+		"err":         err,
 	}).Fatal("Fatal application exception!")
 }
 
-func (l *ApplicationLogger) GoogleApiError(message string, error error) {
+func (l *ApplicationLogger) GoogleApiError(message string, err error) {
 	l.WithFields(logrus.Fields{
 		"application": "planetposen-images",
 		"go_package":  "cloud.google.com/go/storage",
-		"err":         error,
+		"err":         err,
 	}).Error(message)
 }
 
