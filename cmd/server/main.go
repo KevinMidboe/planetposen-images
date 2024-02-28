@@ -15,7 +15,7 @@ func main() {
 	config, err := config.LoadConfig()
 
 	if err != nil {
-		logger.Fatal(err)
+		logger.Error("Error from config loader", err)
 	}
 
 	var s server.Server

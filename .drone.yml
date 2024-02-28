@@ -22,7 +22,7 @@ steps:
       username:
         from_secret: GITHUB_USERNAME
       password:
-        from_secret: GITHUB_PASSWORD
+        from_secret: GHCR_UPLOAD_TOKEN
       tags: latest
     when:
       event:
@@ -35,6 +35,6 @@ steps:
 
 ---
 kind: signature
-hmac: af032206e6fe57ddf4bee365bc616c3d8936973e0aa51e162a662f8026848422
+hmac: 0886d40c8f4b4585dae46a5cb7a2ee0119ebccb39f2876dce41401be07a97ef8
 
 ...
