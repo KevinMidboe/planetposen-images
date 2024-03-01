@@ -1,9 +1,10 @@
 package logger
 
 import (
-	"github.com/sirupsen/logrus"
 	"os"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Event stores messages to log later, from our standard interface
@@ -22,9 +23,7 @@ func InitLogger() *ApplicationLogger {
 	var baseLogger = logrus.New()
 	var applicationLogger = &ApplicationLogger{baseLogger}
 
-	f, _ := os.OpenFile("/var/log/planetposen-logs/planetposen-images.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-
-	applicationLogger.SetOutput(f)
+	applicationLogger.SetOutput(os.Stdout)
 	applicationLogger.Formatter = &logrus.JSONFormatter{
 		TimestampFormat: time.RFC3339Nano,
 		FieldMap: logrus.FieldMap{
